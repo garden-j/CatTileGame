@@ -40,9 +40,6 @@ class MainScene(BaseScene):
 
 
     def draw(self, screen):
-        screen.fill((255, 0, 0))
-        pygame.display.flip()
-        print("DRAW CALLED")
         # 1. 가상 도화지에 격자 배경 그리기
         self.game_surface.fill("white")
         self.board.draw(self.game_surface)
