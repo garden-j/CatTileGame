@@ -3,7 +3,7 @@ name: Deploy Pygame Project to GitHub Pages
 on:
   push:
     branches:
-      - master  # ⚠️ 정원님의 메인 브랜치가 master인 것이 이미지로 확인되었으니 master 유지하시면 됩니다!
+      - master
 
 permissions:
   contents: write
@@ -12,17 +12,25 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
+      # 1. 깃허브 서버로 정원님의 소스코드를 가져옵니다.
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 🎯 깃허브 공식 pygbag 액션 주소로 올바르게 수정 완료!
-      - name: Build Web Version via Pygbag
-        uses: pygame-web/pygbag@main
+      # 2. 깨끗한 파이썬 환경을 세팅합니다.
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          path: .
-          args: --disable-sound-format-error
+          python-version: '3.12'
 
-      # 🚀 빌드된 결과를 gh-pages 브랜치에 자동으로 업로드
+      # 3. pygbag을 서버에 직접 설치하고 순수 코드만 빌드합니다. (가상환경 자동 따돌림)
+      - name: Install Pygbag and Build
+        run: |
+          python -m pip install --upgrade pip
+          pip install pygbag
+          # 정원님의 pure한 코드 위치(.)에서 사운드 에러를 우회하여 빌드합니다.
+          pygbag --build --disable-sound-format-error .
+
+      # 4. 빌드된 build/web 폴더 알맹이들을 gh-pages 브랜치로 자동 배포합니다.
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
