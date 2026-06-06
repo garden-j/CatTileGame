@@ -12,8 +12,8 @@ import pygame
 
 async def main():
     # 1. 초기화 (웹 브라우저 크래시 방지를 위해 순서 정돈 및 중복 제거)
-    pygame.mixer.pre_init()
     pygame.init()
+    pygame.mixer.pre_init()
 
     current_sw = SCREEN_WIDTH
     current_sh = SCREEN_HEIGHT
