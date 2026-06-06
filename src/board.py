@@ -21,14 +21,15 @@ class GameBoard(object):
         try:
             self.pop_sound = pygame.mixer.Sound('assets/sounds/cat_pop.mp3')
             self.pop_sound.set_volume(0.5)
-        except FileNotFoundError:
-            print("효과음을 찾을 수 없습니다. 경로를 확인해")
+        except Exception as e:
+            print("pop sound error:", e)
             self.pop_sound = None
+
         try:
             self.wrong_sound = pygame.mixer.Sound('assets/sounds/cat_wrong.mp3')
             self.wrong_sound.set_volume(0.5)
-        except FileNotFoundError:
-            print("효과음을 찾을 수 없습니다. 경로를 확인해")
+        except Exception as e:
+            print("wrong sound error:", e)
             self.wrong_sound = None
 
     def load_cat_assets(self):

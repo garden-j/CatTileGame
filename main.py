@@ -30,6 +30,7 @@ async def main():
     running = True
     current_scene = MainScene()
 
+    print("LOOP START")
     # 2. 게임 루프
     while running:
         # FPS 제한
@@ -47,6 +48,7 @@ async def main():
             # 현재 씬의 이벤트 핸들러 작동
             current_scene.handle_events(event)
 
+        print("UPDATE")
         # B. 게임 상태 업데이트
         current_scene.update()
 
@@ -54,6 +56,7 @@ async def main():
         screen.fill("white")
         game_surface.fill("white")
 
+        print("DRAW")
         # 현재 씬을 화면에 그리기
         current_scene.draw(screen)
 
