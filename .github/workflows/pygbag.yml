@@ -3,7 +3,10 @@ name: Deploy Pygame Project to GitHub Pages
 on:
   push:
     branches:
-      - master  # 또는 main
+      - master  # ⚠️ 정원님의 메인 브랜치가 master인 것이 이미지로 확인되었으니 master 유지하시면 됩니다!
+
+permissions:
+  contents: write
 
 jobs:
   build-and-deploy:
@@ -12,14 +15,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # 🎯 깃허브 공식 pygbag 액션 주소로 올바르게 수정 완료!
       - name: Build Web Version via Pygbag
-        uses: pygame-web/pygbag-action@main
+        uses: pygame-web/pygbag@main
         with:
           path: .
-          # 🎯 서버가 청정 환경에서 가상환경 없이 알아서 빌드합니다.
+          args: --disable-sound-format-error
 
+      # 🚀 빌드된 결과를 gh-pages 브랜치에 자동으로 업로드
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: build/web
-          branch: gh-pages # 빌드된 웹 파일만 gh-pages 브라우저에 따로 분리 배포
+          branch: gh-pages
