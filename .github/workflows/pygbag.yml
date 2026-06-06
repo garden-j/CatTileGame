@@ -1,0 +1,25 @@
+name: Deploy Pygame Project to GitHub Pages
+
+on:
+  push:
+    branches:
+      - master  # 또는 main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build Web Version via Pygbag
+        uses: pygame-web/pygbag-action@main
+        with:
+          path: .
+          # 🎯 서버가 청정 환경에서 가상환경 없이 알아서 빌드합니다.
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: build/web
+          branch: gh-pages # 빌드된 웹 파일만 gh-pages 브라우저에 따로 분리 배포
