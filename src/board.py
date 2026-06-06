@@ -19,14 +19,14 @@ class GameBoard(object):
 
         # sounds
         try:
-            self.pop_sound = pygame.mixer.Sound('assets/sounds/cat_pop.mp3')
+            self.pop_sound = pygame.mixer.Sound('assets/sounds/cat_pop.ogg')
             self.pop_sound.set_volume(0.5)
         except Exception as e:
             print("pop sound error:", e)
             self.pop_sound = None
 
         try:
-            self.wrong_sound = pygame.mixer.Sound('assets/sounds/cat_wrong.mp3')
+            self.wrong_sound = pygame.mixer.Sound('assets/sounds/cat_wrong.ogg')
             self.wrong_sound.set_volume(0.5)
         except Exception as e:
             print("wrong sound error:", e)
