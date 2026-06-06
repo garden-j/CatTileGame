@@ -15,7 +15,7 @@ class GameBoard(object):
         self.cat_images = {}
         self.load_cat_assets()
 
-        self.falling_cats = []
+        # self.falling_cats = []
 
         # sounds
         try:
@@ -57,7 +57,7 @@ class GameBoard(object):
             new_grid.append(row_data)
         return new_grid
 
-    def handle_click(self, mouse_x, mouse_y):
+    def handle_click(self, mouse_x, mouse_y, scene=None):
         col = mouse_x // self.block_size
         row = (mouse_y - Y_OFFSET) // self.block_size
 
@@ -89,17 +89,20 @@ class GameBoard(object):
             if color_ids.count(color_id) > 1:
                 for x, y, c in found_blocks:
                     if c == color_id:
-                        screen_x = y * self.block_size
-                        screen_y = x * self.block_size + Y_OFFSET
+                        screen_x = y * self.block_size + (self.block_size // 2)
+                        screen_y = x * self.block_size + Y_OFFSET + (self.block_size // 2)
 
-                        vx = random.uniform(-3, 3)
-                        vy = -5
+                        if scene is not None:
+                            scene.trigger_cat_escape(screen_x, screen_y, color_id)
 
-                        self.falling_cats.append({
-                            "x": screen_x, "y": screen_y,
-                            "vx": vx, "vy": vy,
-                            "id": color_id
-                        })
+                        # vx = random.uniform(-3, 3)
+                        # vy = -5
+                        #
+                        # self.falling_cats.append({
+                        #     "x": screen_x, "y": screen_y,
+                        #     "vx": vx, "vy": vy,
+                        #     "id": color_id
+                        # })
 
                         self.grid[x][y] = 0
                         self.score += 1
@@ -112,23 +115,24 @@ class GameBoard(object):
                 self.wrong_sound.play()
 
     def update_effects(self):
-        # 리스트를 역순으로 순회하거나 새로 짜서 제거 시 인덱스 꼬임 방지
-        alive_falling_cats = []
-
-        for cat in self.falling_cats:
-            # 1. 속도만큼 위치 이동
-            cat["x"] += cat["vx"]
-            cat["y"] += cat["vy"]
-
-            # 2. 중력 가속도 적용 (세로 속도가 매 프레임 점점 빨라집니다)
-            cat["vy"] += 0.5
-
-            # 3. 아직 화면 안(y 좌표가 화면 맨 밑바닥을 뚫고 나가기 전)에 있을 때만 살려둡니다.
-            # 대략 창 높이가 700~800이니 900 이하일 때만 유지하는 안전장치
-            if cat["y"] < 900:
-                alive_falling_cats.append(cat)
-
-        self.falling_cats = alive_falling_cats
+        #  # 리스트를 역순으로 순회하거나 새로 짜서 제거 시 인덱스 꼬임 방지
+        # alive_falling_cats = []
+        #
+        # for cat in self.falling_cats:
+        #     # 1. 속도만큼 위치 이동
+        #     cat["x"] += cat["vx"]
+        #     cat["y"] += cat["vy"]
+        #
+        #     # 2. 중력 가속도 적용 (세로 속도가 매 프레임 점점 빨라집니다)
+        #     cat["vy"] += 0.5
+        #
+        #     # 3. 아직 화면 안(y 좌표가 화면 맨 밑바닥을 뚫고 나가기 전)에 있을 때만 살려둡니다.
+        #     # 대략 창 높이가 700~800이니 900 이하일 때만 유지하는 안전장치
+        #     if cat["y"] < 900:
+        #         alive_falling_cats.append(cat)
+        #
+        # self.falling_cats = alive_falling_cats
+        pass
 
     def draw(self, screen):
         for row in range(self.rows):
@@ -150,9 +154,9 @@ class GameBoard(object):
                         pygame.draw.rect(screen, block_color, (x, y, self.block_size - 1, self.block_size - 1),
                                          border_radius=3)
 
-        for cat in self.falling_cats:
-            cat_id = cat["id"]
-            if self.cat_images.get(cat_id) is not None:
-                cat_img = self.cat_images[cat_id]
-                # 실시간으로 추락 중인 물리 좌표에 고양이를 blit 합니다.
-                screen.blit(cat_img, (cat["x"], cat["y"]))
+        # for cat in self.falling_cats:
+        #     cat_id = cat["id"]
+        #     if self.cat_images.get(cat_id) is not None:
+        #         cat_img = self.cat_images[cat_id]
+        #         # 실시간으로 추락 중인 물리 좌표에 고양이를 blit 합니다.
+        #         screen.blit(cat_img, (cat["x"], cat["y"]))

@@ -4,8 +4,57 @@ from src.scene.base import BaseScene
 from src.board import GameBoard
 from src.scene.gameover import GameOverScene
 
-from src.config import GAME_WIDTH, GAME_HEIGHT, TIMER
+from src.config import GAME_WIDTH, GAME_HEIGHT, TIMER, CAT_RUN_IMGS
 
+
+class CatEscape(pygame.sprite.Sprite):
+    def __init__(self, x, y, idx):
+        super().__init__()
+        self.frames = CAT_RUN_IMGS.get(idx, [])
+        self.current_frame = 0
+
+        if self.frames:
+            self.image = self.frames[self.current_frame]
+        else:
+            self.image = pygame.Surface((GAME_WIDTH, GAME_HEIGHT), pygame.SRCALPHA)
+        self.rect = self.image.get_rect(center=(x, y))
+
+        self.frame_timer = 0
+        self.animation_speed = 8
+        self.speed = 3
+
+        dist_left = x
+        dist_right = GAME_WIDTH - x
+        min_dist = min(dist_left, dist_right)
+
+        self.flip_x = False
+        if min_dist == dist_left:
+            self.dx, self.dy = -self.speed, 0
+            self.flip_x = True  # 왼쪽으로 뛸 때는 이미지 좌우 반전
+        elif min_dist == dist_right:
+            self.dx, self.dy = self.speed, 0
+
+        self.sw = GAME_WIDTH
+        self.sh = GAME_HEIGHT
+    def update(self):
+        self.rect.x += self.dx
+        self.rect.y += self.dy
+        if self.frames:
+            self.frame_timer += 1
+            if self.frame_timer >= self.animation_speed:
+                self.frame_timer = 0
+                self.current_frame = (self.current_frame + 1) % len(self.frames)
+                next_img = self.frames[self.current_frame]
+
+                if self.flip_x:
+                    self.image = pygame.transform.flip(next_img, True, False)
+                else:
+                    self.image = next_img
+            old_center = self.rect.center
+            self.rect = self.image.get_rect()
+            self.rect.center = old_center
+        if self.rect.right < 0 or self.rect.left > GAME_WIDTH:
+            self.kill()
 
 class GameplayScene(BaseScene):
     def __init__(self):
@@ -18,6 +67,7 @@ class GameplayScene(BaseScene):
         self.game_over = False
         # 메인 화면의 보드와는 별개로, 게임용 새로운 랜덤 보드판 생성!
         self.board = GameBoard()
+        self.escape_cats = pygame.sprite.Group()
 
     def handle_events(self, event):
         if self.game_over:
@@ -33,9 +83,13 @@ class GameplayScene(BaseScene):
                 game_my = event.pos[1] - center_y
 
                 # 여태까지 완성한 상하좌우 매치 및 삭제 로직 실행!
-                self.board.handle_click(game_mx, game_my)
+                self.board.handle_click(game_mx, game_my, scene=self)
                 if self.board.isWrong:
                     self.penalty_time += 10
+
+    def trigger_cat_escape(self, x, y, idx):
+        new_cat = CatEscape(x, y, idx)
+        self.escape_cats.add(new_cat)
 
     def update(self):
         if self.game_over:
@@ -44,6 +98,7 @@ class GameplayScene(BaseScene):
         self.time_left = TIMER - (seconds_passed + self.penalty_time)
 
         self.board.update_effects()
+        self.escape_cats.update()
 
         if self.time_left <= 0:
             self.game_over = True
@@ -52,9 +107,9 @@ class GameplayScene(BaseScene):
 
     def draw(self, screen):
         self.game_surface.fill("white")
-
         # 순수한 게임판 격자와 블록만 그리기
         self.board.draw(self.game_surface)
+        self.escape_cats.draw(self.game_surface)
 
         score_text = self.timer_font.render("Score: " + str(self.board.score), True, "black")
         self.game_surface.blit(score_text, (480, 0))

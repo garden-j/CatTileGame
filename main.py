@@ -1,11 +1,13 @@
 import pygame
+import asyncio
 import sys
 from src.config import *
 from src.board import GameBoard
+from src.scene.gameplay import GameplayScene
 from src.scene.mainmenu import MainScene
 
 
-def main():
+async def main():
     # 1. 초기화
     pygame.init()
     pygame.mixer.pre_init(44100, -16, 2, 2048)
@@ -13,11 +15,15 @@ def main():
     current_sw = SCREEN_WIDTH
     current_sh = SCREEN_HEIGHT
     screen = pygame.display.set_mode((current_sw, current_sh), pygame.RESIZABLE)
-    pygame.display.set_caption("Color tiles")
+    pygame.display.set_caption("Color Block Game")
     clock = pygame.time.Clock()
+
 
     game_surface = pygame.Surface((GAME_WIDTH, GAME_HEIGHT))
     board = GameBoard()
+
+    load_cat_run_img()
+    # gameplay = GameplayScene()
 
     running = True
     current_scene = MainScene()
@@ -38,6 +44,7 @@ def main():
             current_scene.handle_events(event)
 
         current_scene.update()
+        # gameplay.update()
 
         screen.fill("white")
         game_surface.fill("white")
@@ -48,9 +55,12 @@ def main():
 
         pygame.display.flip()  # 버퍼를 화면에 반영
 
+        await asyncio.sleep(0)
+
     pygame.quit()
     sys.exit()
 
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
+asyncio.run(main())

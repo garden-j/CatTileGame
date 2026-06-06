@@ -51,7 +51,7 @@ class MainScene(BaseScene):
         self.game_surface.blit(overlay, (0, 0))
 
         # 3. 게임 이름 (타이틀) 그리기
-        title_text = self.title_font.render("Color Tiles", True, (255, 255, 255))
+        title_text = self.title_font.render("CAT TILES", True, (255, 255, 255))
         self.game_surface.blit(title_text, (GAME_WIDTH // 2 - title_text.get_width() // 2, 120))
 
         # 4. 게임 설명 그리기
