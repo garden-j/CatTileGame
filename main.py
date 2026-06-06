@@ -1,16 +1,18 @@
 # [main.py]
-import pygame
+
 import asyncio
 import sys
 from src.config import *
 from src.board import GameBoard
 from src.scene.gameplay import GameplayScene
 from src.scene.mainmenu import MainScene
+import pygame
+
 
 
 async def main():
     # 1. 초기화 (웹 브라우저 크래시 방지를 위해 순서 정돈 및 중복 제거)
-    pygame.mixer.pre_init(44100, -16, 2, 2048)
+    pygame.mixer.pre_init()
     pygame.init()
 
     current_sw = SCREEN_WIDTH
